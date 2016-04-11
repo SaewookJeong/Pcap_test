@@ -1,19 +1,18 @@
 #include <pcap/pcap.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 int eth_hdr = 0;
 int ip_hdr = eth_hdr + 12;
-int tcp_hdr = ip_hdr + 20;
-int udp_hdr = ip_hdr + 20;
-
+int tcp_hdr = ip_hdr + 11;
+int udp_hdr = ip_hdr + 11;
 
 void get_pcap(u_char *args, const struct pcap_pkthdr *header, const u_char *p)
 {
 
 
-    int des, src, sum;
+    int des, src;
 
     /*============ Ethernet ==========*/
     printf("    <Ethernet> - src mac: ");
@@ -53,14 +52,35 @@ void get_pcap(u_char *args, const struct pcap_pkthdr *header, const u_char *p)
 
     /*========== TCP ===========*/
 
-    if(p[23] == 6) // p[23] == 6 TCP port
-        {
-            printf("    <TCP> - Source Port: ");
 
-            printf("%d, ",p[34]);
-            printf("%d\n",p[35]);
+    if(p[tcp_hdr] == 6) // p[23] == 6 TCP port, tcp_hdr = 23
+         {
+            printf("    <TCP> - src prt: ");
 
-        }
+            //strcat(p[tcp_hdr + 11], p[tcp_hdr + 12]);
+
+            printf("%02X:", p[tcp_hdr + 11]); // --> 34
+            printf("%02X", p[tcp_hdr + 12]); // --> 35
+            printf("\n");
+
+            printf("    <TCP> - dst prt: ");
+            printf("%02X:", p[tcp_hdr + 13]); // --> 36
+            printf("%02X", p[tcp_hdr + 14]); // --> 37
+            printf("\n\n");
+         }
+
+    if(p[udp_hdr] == 13) // p[23] == 6 TCP port, tcp_hdr = 23
+         {
+            printf("    <UDP> - src prt: ");
+            printf("%02X:", p[udp_hdr + 11]); // --> 34
+            printf("%02X", p[udp_hdr + 12]); // --> 35
+            printf("\n");
+
+            printf("    <UDP> - dst prt: ");
+            printf("%02X:", p[udp_hdr + 13]); // --> 36
+            printf("%02X", p[udp_hdr + 14]); // --> 37
+            printf("\n\n");
+         }
 }
 
 
@@ -94,5 +114,7 @@ int main()
    return(0);
 
 }
+
+//http://egloos.zum.com/innaei/v/4416421
 
 

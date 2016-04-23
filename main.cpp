@@ -1,8 +1,5 @@
 #include <pcap/pcap.h>
 #include <libnet.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <netinet/udp.h>
 #include <netinet/in.h>
 
 

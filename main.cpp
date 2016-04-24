@@ -3,9 +3,6 @@
 #include <netinet/in.h>
 
 
-
-
-
 int main()
 
 {
@@ -32,6 +29,7 @@ int main()
                           struct pcap_pkthdr *h;
                           const u_char * p;
                           int res = pcap_next_ex(handle, &h, &p);
+                          if(res == 0){printf("No packet is sniffed..!!");break;}
                           if(res == -1) break;
 
 
@@ -61,7 +59,7 @@ int main()
                           if(ntohs(ehP->ether_type) == ETHERTYPE_IP)
                             {
                                 struct libnet_ipv4_hdr* ihP;
-                                ihP = (struct libnet_ipv4_hdr*)(p + sizeof(*ehP));
+                                ihP = (struct libnet_ipv4_hdr*)(p + sizeof(*ehP)); //ehp == 14
 
                                 printf("               ** EHTERTYPE_IP **\n");
                                 printf("      Source IP     ->    Destination IP   \n");
@@ -72,10 +70,12 @@ int main()
 
                                 if(ihP->ip_p == IPPROTO_TCP){
                                 struct libnet_tcp_hdr *tcph;
-                                tcph = (struct libnet_tcp_hdr *)(p + 34); //34 + TCP/UDP header palce
+                                tcph = (struct libnet_tcp_hdr *)(ihP + 1); //34 + TCP/UDP header palce
+                                printf("%d -> %d", ihP->ip_hl*4, sizeof(*ihP));
+
                                 printf("               ** TCP Information **\n");
                                 printf("     Src Port : %d\n" , ntohs(tcph->th_sport));
-                                printf("     Dst Port : %d\n" , ntohs(tcph->th_dport));
+                                printf("     Dst Port : %d\n\n\n" , ntohs(tcph->th_dport));
                                 /*printf("%d\n", ihP->ip_hl * 4);*/
                                 }
 
@@ -84,7 +84,7 @@ int main()
                                 else if(ihP->ip_p == IPPROTO_UDP)
                                 {
                                     struct libnet_udp_hdr *udph;
-                                    udph = (struct libnet_udp_hdr *)(p + 34); //34 + TCP/UDP header palce
+                                    udph = (struct libnet_udp_hdr *)(ihP + 1); //34 + TCP/UDP header palce
                                     printf("               ** UDP Information **\n");
                                     printf("     Src Port : %d\n" , ntohs(udph->uh_sport));
                                     printf("Dst Port : %d\n" , ntohs(udph->uh_sport));

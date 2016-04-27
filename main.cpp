@@ -2,7 +2,6 @@
 #include <libnet.h>
 #include <netinet/in.h>
 
-
 int main()
 
 {
@@ -70,9 +69,7 @@ int main()
 
                                 if(ihP->ip_p == IPPROTO_TCP){
                                 struct libnet_tcp_hdr *tcph;
-                                tcph = (struct libnet_tcp_hdr *)(ihP + 1); //34 + TCP/UDP header palce
-                                printf("%d -> %d", ihP->ip_hl*4, sizeof(*ihP));
-
+                                tcph = (struct libnet_tcp_hdr *)(ihP + 1); //find next pointer
                                 printf("               ** TCP Information **\n");
                                 printf("     Src Port : %d\n" , ntohs(tcph->th_sport));
                                 printf("     Dst Port : %d\n\n\n" , ntohs(tcph->th_dport));
@@ -84,7 +81,7 @@ int main()
                                 else if(ihP->ip_p == IPPROTO_UDP)
                                 {
                                     struct libnet_udp_hdr *udph;
-                                    udph = (struct libnet_udp_hdr *)(ihP + 1); //34 + TCP/UDP header palce
+                                    udph = (struct libnet_udp_hdr *)(ihP + 1); //find next pointer
                                     printf("               ** UDP Information **\n");
                                     printf("     Src Port : %d\n" , ntohs(udph->uh_sport));
                                     printf("Dst Port : %d\n" , ntohs(udph->uh_sport));
